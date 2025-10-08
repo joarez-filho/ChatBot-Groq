@@ -4,7 +4,7 @@
 
 Um assistente de chat interativo desenvolvido em Python que utiliza a **API da Groq** e o framework **LangChain** para oferecer conversação livre e funcionalidades de processamento de documentos (websites e vídeos do YouTube).
 
-O projeto é capaz de conversar com o usuário ou atuar como um **RAG (Retrieval-Augmented Generation)** simples, respondendo a perguntas com base no conteúdo de uma URL fornecida.>
+O projeto é capaz de conversar com o usuário ou atuar como um **RAG (Retrieval-Augmented Generation)** simples, respondendo a perguntas com base no conteúdo de uma URL fornecida.
 ---
 
 ## Funcionalidades
