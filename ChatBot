@@ -1,0 +1,103 @@
+import os
+from langchain_groq import ChatGroq
+from langchain.prompts import ChatPromptTemplate
+from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import YoutubeLoader
+from langchain_community.document_loaders import PyPDFLoader
+
+
+
+api_key = "[SUA_API_GROQ]"
+os.environ['GROQ_API_KEY'] = api_key
+
+chat = ChatGroq(model = 'llama-3.3-70b-versatile')
+
+def resposta_bot(prompt):
+    msm_modelo = [(('system', 'Você é o chatBot, um assitente amigável'))]
+    msm_modelo += prompt
+    template = ChatPromptTemplate.from_messages(msm_modelo)
+    chain = template | chat
+    return chain.invoke({}).content
+
+
+def resposta_bot_documento(prompt, documento):
+    msm_system = "Você é o chatBot, um assistente amigável que irá responder perguntas sobre esse docuemnto: {arquivo}"
+    msm_modelo = [('system', msm_system)]
+    msm_modelo += prompt
+    template = ChatPromptTemplate.from_messages(msm_modelo)
+    chain = template | chat
+    resposta =  chain.invoke({'arquivo': documento}).content
+    return resposta
+
+
+def carrega_documento(usuario):
+    documento = ""
+    url = ""
+    loader = ""
+
+    if int(usuario) == 2:
+        url = input('Digite a url do site')
+        loader = WebBaseLoader(url)
+    else:
+        url = input('Digite a url do vídeo')
+        lingua = input('Digite a lingua do vídeo')
+        loader = YoutubeLoader.from_youtube_url(url, language=[lingua])
+
+    lista_documento = loader.load()
+
+    for doc in lista_documento:
+        documento += doc.page_content
+    return documento
+
+
+print("Bem-vindo ao ChatBot")
+
+texto_selecao = '''Digite o que vocer deseja :
+                1- conversar com o chat
+                2 - perguntar sobre algum site
+                3 - pergunta sobre um vídeo
+                ! - encerrar
+
+                '''
+
+user = ""
+
+while True:
+    user = input(texto_selecao)
+
+    if user == "!":
+        break
+    elif int(user) == 1:
+        break
+    else:
+        documento = carrega_documento(user)
+        break
+
+    print('Entrada inválida')
+
+mensagens = []
+
+while True:
+    if user == "!":
+        break
+
+    pergunta = input('Usúario: ')
+
+    if pergunta == "!":
+        break
+
+    mensagens.append(('user', pergunta))
+
+    if not (int(user) == 1) :
+        resposta = resposta_bot_documento(mensagens, documento)
+
+    else:
+        resposta = resposta_bot(mensagens)
+
+    mensagens.append(('assistant', resposta))
+
+    print(f'BotDudu: {resposta} \n')
+
+print('obrigado ;) \n')
+print('Histórico: ')
+print(mensagens)
